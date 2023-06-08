@@ -1,0 +1,65 @@
+-- [10] A database consists of following tables. 
+	PROJECT(PNO, PNAME, CHIEF) 
+	EMPLOYEE(EMPNO, EMPNAME) 
+	ASSIGNED(PNO,EMPNO) 
+	A. Get count of employees working on project. 
+	B. Get details of employee working on project pr002. 
+	C. Get details of employee working on project DBMS
+
+
+CREATE TABLE PROJECT (
+  PNO INT,
+  PNAME VARCHAR(255),
+  CHIEF VARCHAR(255)
+);
+
+INSERT INTO PROJECT (PNO, PNAME, CHIEF)
+VALUES
+  (1, 'PR001', 'John'),
+  (2, 'PR002', 'Sarah'),
+  (3, 'PR003', 'Michael'),
+  (4, 'PR004', 'Emma'),
+  (5, 'PR005', 'David');
+
+CREATE TABLE EMPLOYEE (
+  EMPNO INT,
+  EMPNAME VARCHAR(255)
+);
+
+INSERT INTO EMPLOYEE (EMPNO, EMPNAME)
+VALUES
+  (1, 'John Smith'),
+  (2, 'Sarah Johnson'),
+  (3, 'Michael Brown'),
+  (4, 'Emma Thompson'),
+  (5, 'David Sanders');
+
+CREATE TABLE ASSIGNED (
+  PNO INT,
+  EMPNO INT
+);
+
+INSERT INTO ASSIGNED (PNO, EMPNO)
+VALUES
+  (2, 1),
+  (2, 3),
+  (3, 2),
+  (4, 4),
+  (5, 5);
+
+SELECT PNO, COUNT(EMPNO) AS EmployeeCount
+FROM ASSIGNED
+GROUP BY PNO;
+
+SELECT E.*
+FROM EMPLOYEE E
+JOIN ASSIGNED A ON E.EMPNO = A.EMPNO
+JOIN PROJECT P ON A.PNO = P.PNO
+WHERE P.PNAME = 'PR002';
+
+SELECT E.*
+FROM EMPLOYEE E
+JOIN ASSIGNED A ON E.EMPNO = A.EMPNO
+JOIN PROJECT P ON A.PNO = P.PNO
+WHERE P.PNAME = 'DBMS';
+

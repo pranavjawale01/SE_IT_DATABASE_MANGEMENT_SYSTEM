@@ -1,0 +1,36 @@
+-- [11]Create a table „emp‟ with the following columns by assuming suitable data 	type and size with correct syntax in SQL. 
+	Emp–id, Ename, City, State, Salary, Age, Hire_ date. 
+	Give an expression in SQL to solve each of the following queries :
+	i) Find the names of all employees whose name starts with „Sa‟. 
+	ii) List all the employees name and salary whose age is less than 40 years. 
+	iii) Select the employees whose salary is between Rs. 20000 and Rs. 30000.
+
+CREATE TABLE emp (
+  Emp_id INT,
+  Ename VARCHAR(255),
+  City VARCHAR(255),
+  State VARCHAR(255),
+  Salary DECIMAL(10, 2),
+  Age INT,
+  Hire_date DATE
+);
+
+INSERT INTO emp (Emp_id, Ename, City, State, Salary, Age, Hire_date)
+VALUES
+  (1, 'John Smith', 'New York', 'NY', 25000, 35, '2020-01-15'),
+  (2, 'Sarah Johnson', 'Los Angeles', 'CA', 28000, 42, '2018-06-22'),
+  (3, 'Samuel Brown', 'Chicago', 'IL', 30000, 29, '2019-09-10'),
+  (4, 'Sara Thompson', 'Houston', 'TX', 22000, 37, '2017-03-05'),
+  (5, 'Alex Sanders', 'Miami', 'FL', 27000, 31, '2021-11-28');
+
+SELECT Ename
+FROM emp
+WHERE Ename LIKE 'Sa%';
+
+SELECT Ename, Salary
+FROM emp
+WHERE Age < 40;
+
+SELECT *
+FROM emp
+WHERE Salary BETWEEN 20000 AND 30000;

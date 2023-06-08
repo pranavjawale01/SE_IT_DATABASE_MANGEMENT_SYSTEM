@@ -1,0 +1,60 @@
+-- [6] Consider the following relation: 
+	Emp_company (ename, cname, salary, joiningdate, and city) 
+	1. List the maximum salary in all companies. 
+	2. Find maximum salary of employees of “TATA‟ Company. 
+	3. Count the number employees working in”ACC” company. 
+	4. Display the names of companies and the maximum salary in that company. 
+	5. Find the average salary of each company. 
+	6. Increase the salary of an employee by 15% who are living in city Mumbai. 
+	7. Delete rows of the table having salary less than 5000. 
+	8. List the names of employees who joined in Jan-2000
+
+-- Create the Emp_company table
+CREATE TABLE Emp_company (
+  ename VARCHAR(255),
+  cname VARCHAR(255),
+  salary DECIMAL(8, 2),
+  joiningdate DATE,
+  city VARCHAR(255)
+);
+
+-- Insert records into the Emp_company table
+INSERT INTO Emp_company (ename, cname, salary, joiningdate, city)
+VALUES
+  ('John Doe', 'TATA', 50000, '2000-01-15', 'Mumbai'),
+  ('Jane Smith', 'ACC', 45000, '2001-05-20', 'Delhi'),
+  ('Michael Johnson', 'TATA', 55000, '1998-12-10', 'Mumbai'),
+  ('Emily Davis', 'ACC', 48000, '2003-07-05', 'Mumbai'),
+  ('David Wilson', 'XYZ', 60000, '2002-03-25', 'Bangalore');
+
+
+SELECT cname, MAX(salary) AS max_salary
+FROM Emp_company
+GROUP BY cname;
+
+SELECT MAX(salary) AS max_salary
+FROM Emp_company
+WHERE cname = 'TATA';
+
+SELECT COUNT(*) AS num_employees
+FROM Emp_company
+WHERE cname = 'ACC';
+
+SELECT cname, MAX(salary) AS max_salary
+FROM Emp_company
+GROUP BY cname;
+
+SELECT cname, AVG(salary) AS avg_salary
+FROM Emp_company
+GROUP BY cname;
+
+UPDATE Emp_company
+SET salary = salary * 1.15
+WHERE city = 'Mumbai';
+
+DELETE FROM Emp_company
+WHERE salary < 5000;
+
+SELECT ename
+FROM Emp_company
+WHERE joiningdate >= '2000-01-01' AND joiningdate <= '2000-01-31';

@@ -1,0 +1,100 @@
+-- [9]Design and Develop DB for “Customerorder” with all constraints(Not NULL, 	PrimaryKey, Foreign Key). 
+	Customer (Cust_no, name, Street, city, state) 
+	Order (Order_no,Cust_no,Order_date,Ship_date,Tocity,ToState,ToZip) 
+	Contains(Order_no,Stock_no,quantity,Discount)- 
+	Stock(Stock_no,price,tax) 
+	1) Create View on columns Order_no and Customer_no with order table. 
+	2) Display Name of customer, City, OrderNo and order date of customer_no 101. 
+	3)Display price and discount of stock_no 102. 
+
+-- Create the Customer table
+CREATE TABLE Customer (
+  Cust_no INT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  Street VARCHAR(255),
+  city VARCHAR(255),
+  state VARCHAR(255)
+);
+
+-- Create the Order table
+CREATE TABLE Order (
+  Order_no INT PRIMARY KEY,
+  Cust_no INT,
+  Order_date DATE,
+  Ship_date DATE,
+  Tocity VARCHAR(255),
+  ToState VARCHAR(255),
+  ToZip VARCHAR(255),
+  FOREIGN KEY (Cust_no) REFERENCES Customer(Cust_no)
+);
+
+-- Create the Contains table
+CREATE TABLE Contains (
+  Order_no INT,
+  Stock_no INT,
+  quantity INT,
+  Discount DECIMAL(8, 2),
+  FOREIGN KEY (Order_no) REFERENCES Order(Order_no),
+  FOREIGN KEY (Stock_no) REFERENCES Stock(Stock_no)
+);
+
+-- Create the Stock table
+CREATE TABLE Stock (
+  Stock_no INT PRIMARY KEY,
+  price DECIMAL(8, 2),
+  tax DECIMAL(8, 2)
+);
+
+-- Insert records into the Customer table
+INSERT INTO Customer (Cust_no, name, Street, city, state)
+VALUES
+  (101, 'John', '123 Main St', 'New York', 'NY'),
+  (102, 'Alice', '456 Elm St', 'Los Angeles', 'CA'),
+  (103, 'Bob', '789 Oak St', 'Chicago', 'IL'),
+  (104, 'Sarah', '321 Pine St', 'San Francisco', 'CA'),
+  (105, 'Mike', '654 Cedar St', 'Houston', 'TX');
+
+-- Insert records into the Order table
+INSERT INTO Order (Order_no, Cust_no, Order_date, Ship_date, Tocity, ToState, ToZip)
+VALUES
+  (1, 101, '2023-01-01', '2023-01-05', 'New York', 'NY', '12345'),
+  (2, 102, '2023-02-01', '2023-02-05', 'Los Angeles', 'CA', '67890'),
+  (3, 103, '2023-03-01', '2023-03-05', 'Chicago', 'IL', '45678'),
+  (4, 101, '2023-04-01', '2023-04-05', 'New York', 'NY', '12345'),
+  (5, 105, '2023-05-01', '2023-05-05', 'Houston', 'TX', '98765');
+
+-- Insert records into the Contains table
+INSERT INTO Contains (Order_no, Stock_no, quantity, Discount)
+VALUES
+  (1, 101, 2, 0.1),
+  (2, 102, 1, 0.05),
+  (3, 103, 3, 0.2),
+  (4, 101, 2, 0.15),
+  (5, 105, 1, 0.1);
+
+-- Insert records into the Stock table
+INSERT INTO Stock (Stock_no, price, tax)
+VALUES
+  (101, 10.99, 0.05),
+  (102, 20.99, 0.1),
+  (103, 15.99, 0.05),
+  (104, 12.99, 0.05),
+  (105, 8.99, 0.05);
+
+CREATE VIEW OrderView AS
+SELECT Order_no, Cust_no
+FROM Order;
+
+
+SELECT c.name, c.city, o.Order_no, o.Order_date
+FROM Customer c
+JOIN Order o ON c.Cust_no = o.Cust_no
+WHERE c.Cust_no = 101;
+
+
+SELECT price, Discount
+FROM Stock
+JOIN Contains ON Stock.Stock_no = Contains.Stock_no
+WHERE Stock.Stock_no = 102;
+
+

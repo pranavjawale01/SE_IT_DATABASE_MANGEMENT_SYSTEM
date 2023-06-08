@@ -1,0 +1,114 @@
+-- [8] Consider the following Bank DB schema. 
+	Deposit(accountno, cname, amount, acctdate,bname) 
+	Branch(bname,city) 
+	Customer(cname,city) 
+	Borrow(loanno, cname, bname,amount) 
+	Write the following Mysql queries. 
+	1. List all data from borrow table. 
+	2. Get customer names who has deposit greater than 1000 and name like “A”.
+	3. List the branches having sum of deposit more than 1000 and located in 	Mumbai. 
+	4. List 10% interest to all depositors living in pune
+	5. Transfer Rs 500 from account of Anil to the account of Sunil. 
+	6. Delete depositors having deposit less than 500.
+
+-- Create the Deposit table
+CREATE TABLE Deposit (
+  accountno INT PRIMARY KEY,
+  cname VARCHAR(255),
+  amount DECIMAL(8, 2),
+  acctdate DATE,
+  bname VARCHAR(255),
+  FOREIGN KEY (bname) REFERENCES Branch(bname)
+);
+
+-- Insert records into the Deposit table
+INSERT INTO Deposit (accountno, cname, amount, acctdate, bname)
+VALUES
+  (1, 'Anil', 2000, '2023-01-01', 'Branch 1'),
+  (2, 'Sunil', 1500, '2023-02-01', 'Branch 2'),
+  (3, 'Amit', 3000, '2023-03-01', 'Branch 1'),
+  (4, 'Rahul', 1200, '2023-04-01', 'Branch 3'),
+  (5, 'Aarti', 2500, '2023-05-01', 'Branch 2');
+
+-- Create the Branch table
+CREATE TABLE Branch (
+  bname VARCHAR(255) PRIMARY KEY,
+  city VARCHAR(255)
+);
+
+-- Insert records into the Branch table
+INSERT INTO Branch (bname, city)
+VALUES
+  ('Branch 1', 'Mumbai'),
+  ('Branch 2', 'Mumbai'),
+  ('Branch 3', 'Pune'),
+  ('Branch 4', 'Delhi'),
+  ('Branch 5', 'Bangalore');
+
+-- Create the Customer table
+CREATE TABLE Customer (
+  cname VARCHAR(255) PRIMARY KEY,
+  city VARCHAR(255)
+);
+
+-- Insert records into the Customer table
+INSERT INTO Customer (cname, city)
+VALUES
+  ('Anil', 'Pune'),
+  ('Sunil', 'Mumbai'),
+  ('Amit', 'Delhi'),
+  ('Rahul', 'Pune'),
+  ('Aarti', 'Mumbai');
+
+-- Create the Borrow table
+CREATE TABLE Borrow (
+  loanno INT PRIMARY KEY,
+  cname VARCHAR(255),
+  bname VARCHAR(255),
+  amount DECIMAL(8, 2),
+  FOREIGN KEY (cname) REFERENCES Customer(cname),
+  FOREIGN KEY (bname) REFERENCES Branch(bname)
+);
+
+-- Insert records into the Borrow table
+INSERT INTO Borrow (loanno, cname, bname, amount)
+VALUES
+  (1, 'Anil', 'Branch 1', 5000),
+  (2, 'Sunil', 'Branch 2', 3000),
+  (3, 'Amit', 'Branch 1', 2000),
+  (4, 'Rahul', 'Branch 3', 4000),
+  (5, 'Aarti', 'Branch 2', 1500);
+
+SELECT *
+FROM Borrow;
+
+SELECT cname
+FROM Deposit
+WHERE amount > 1000 AND cname LIKE 'A%';
+
+SELECT d.bname
+FROM Deposit d
+JOIN Branch b ON d.bname = b.bname
+WHERE b.city = 'Mumbai'
+GROUP BY d.bname
+HAVING SUM(d.amount) > 1000;
+
+UPDATE Deposit
+SET amount = amount * 1.1
+WHERE cname IN (
+  SELECT cname
+  FROM Customer
+  WHERE city = 'Pune'
+);
+
+UPDATE Deposit
+SET amount = amount - 500
+WHERE cname = 'Anil';
+
+UPDATE Deposit
+SET amount = amount + 500
+WHERE cname = 'Sunil';
+
+DELETE FROM Deposit
+WHERE amount < 500;
+

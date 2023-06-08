@@ -1,0 +1,82 @@
+-- [3]Consider the following Relations. It defines Library Database Schema 
+	BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, Price[Check Price>0], 
+	Date_Of_Publication(Default SYSDATE), Book_Copy) 
+	BOOK_AUTHORS (Book_ISBN ,Author_Name [PK],Author_City[Default 
+	“Pune‟], Phone[UNIQUE]) 
+	Design and Develop SQL DML statements for above database using MySQL 
+	1. Create tables for above database with all constraints and Insert at least 	five records in each table. 
+	2. Select Book Names from table Book whose copies are in between 10 to 15. 
+	3. Update Book Copies as “10” whose Book Publisher is “Tata MacGraw Hill”. 
+	4. Select the Name of Publisher who supplied maximum books. 
+	5. Display name of publishers as per no of books published by them in 	ascending order. 
+	6. Select details of Books whose Author lives in “Pune”
+
+
+-- Create the BOOK table
+CREATE TABLE BOOK (
+  Book_ISBN INT PRIMARY KEY,
+  Title VARCHAR(255) NOT NULL,
+  Publisher_Name VARCHAR(255),
+  Price DECIMAL(8, 2) CHECK (Price > 0),
+  Date_Of_Publication DATE DEFAULT CURRENT_DATE(),
+  Book_Copy INT
+);
+
+-- Create the BOOK_AUTHORS table
+CREATE TABLE BOOK_AUTHORS (
+  Book_ISBN INT,
+  Author_Name VARCHAR(255),
+  Author_City VARCHAR(255) DEFAULT 'Pune',
+  Phone VARCHAR(20) UNIQUE,
+  PRIMARY KEY (Book_ISBN, Author_Name),
+  FOREIGN KEY (Book_ISBN) REFERENCES BOOK(Book_ISBN)
+);
+
+-- Insert records into the BOOK table
+INSERT INTO BOOK (Book_ISBN, Title, Publisher_Name, Price, Book_Copy)
+VALUES
+  (1, 'Book 1', 'Publisher A', 9.99, 10),
+  (2, 'Book 2', 'Publisher B', 19.99, 5),
+  (3, 'Book 3', 'Publisher A', 14.99, 12),
+  (4, 'Book 4', 'Publisher C', 24.99, 8),
+  (5, 'Book 5', 'Publisher B', 12.99, 15);
+
+-- Insert records into the BOOK_AUTHORS table
+INSERT INTO BOOK_AUTHORS (Book_ISBN, Author_Name, Author_City, Phone)
+VALUES
+  (1, 'Author 1', 'Pune', '123-456-7890'),
+  (1, 'Author 2', 'Pune', '234-567-8901'),
+  (2, 'Author 3', 'Pune', '345-678-9012'),
+  (2, 'Author 4', 'Pune', '456-789-0123'),
+  (3, 'Author 5', 'Pune', '567-890-1234');
+
+SELECT Title
+FROM BOOK
+WHERE Book_Copy BETWEEN 10 AND 15;
+
+UPDATE BOOK
+SET Book_Copy = 10
+WHERE Publisher_Name = 'Tata MacGraw Hill';
+
+SELECT Publisher_Name
+FROM BOOK
+GROUP BY Publisher_Name
+HAVING COUNT(*) = (
+    SELECT MAX(cnt)
+    FROM (
+        SELECT COUNT(*) AS cnt
+        FROM BOOK
+        GROUP BY Publisher_Name
+    ) AS counts
+);
+
+SELECT Publisher_Name, COUNT(*) AS Book_Count
+FROM BOOK
+GROUP BY Publisher_Name
+ORDER BY Book_Count ASC;
+
+SELECT b.Book_ISBN, b.Title, b.Publisher_Name, b.Price, b.Date_Of_Publication, b.Book_Copy
+FROM BOOK b
+INNER JOIN BOOK_AUTHORS ba ON b.Book_ISBN = ba.Book_ISBN
+WHERE ba.Author_City = 'Pune';
+

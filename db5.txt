@@ -1,0 +1,150 @@
+-- [5] Consider following Computer training institute database schema with 	following information. 
+	Course(coursecode, coursename, syllabus) 
+	Batch(batchcode, coursecode, startingdate, duration, coursefees, netincome, 	expectedincome) 
+	Enquiry(enquirynumber, fname, lname, coursecode, plotno, street, city, phone, 	enquirydate, enquirystatus) 
+	Enrollment(rollno, enquirynumber, batchcode, enrollmentdate) Write following 	Mysql queries: 
+	1. Display the contents of batch for particular course having coursecode=10 
+	2. Display the batchcode of batch having expectedincome more than netincome 	by 2000 
+	3. Display the coursename, startingdate of all batches 
+	4. Find out coursename with coursefees greater than 50000 
+	5. Display the details of batch having a specified coursename. 
+	6. Find out the number of persons whose name starts with „S‟. 
+	7. Delete all rows from enquiry for a specified coursename.
+
+
+
+-- Create the Course table
+CREATE TABLE Course (
+  coursecode INT PRIMARY KEY,
+  coursename VARCHAR(255),
+  syllabus TEXT
+);
+
+-- Insert records into the Course table
+INSERT INTO Course (coursecode, coursename, syllabus)
+VALUES
+  (10, 'Course 1', 'Syllabus 1'),
+  (20, 'Course 2', 'Syllabus 2'),
+  (30, 'Course 3', 'Syllabus 3'),
+  (40, 'Course 4', 'Syllabus 4'),
+  (50, 'Course 5', 'Syllabus 5');
+
+-- Create the Batch table
+CREATE TABLE Batch (
+  batchcode INT PRIMARY KEY,
+  coursecode INT,
+  startingdate DATE,
+  duration INT,
+  coursefees DECIMAL(8, 2),
+  netincome DECIMAL(8, 2),
+  expectedincome DECIMAL(8, 2),
+  FOREIGN KEY (coursecode) REFERENCES Course(coursecode)
+);
+
+-- Insert records into the Batch table
+INSERT INTO Batch (batchcode, coursecode, startingdate, duration, coursefees, netincome, expectedincome)
+VALUES
+  (1, 10, '2023-01-01', 4, 50000, 40000, 45000),
+  (2, 20, '2023-02-01', 5, 60000, 55000, 58000),
+  (3, 10, '2023-03-01', 6, 55000, 48000, 52000),
+  (4, 30, '2023-04-01', 4, 70000, 65000, 68000),
+  (5, 20, '2023-05-01', 3, 55000, 52000, 54000);
+
+-- Create the Enquiry table
+CREATE TABLE Enquiry (
+  enquirynumber INT PRIMARY KEY,
+  fname VARCHAR(255),
+  lname VARCHAR(255),
+  coursecode INT,
+  plotno VARCHAR(255),
+  street VARCHAR(255),
+  city VARCHAR(255),
+  phone VARCHAR(255),
+  enquirydate DATE,
+  enquirystatus VARCHAR(255),
+  FOREIGN KEY (coursecode) REFERENCES Course(coursecode)
+);
+
+-- Insert records into the Enquiry table
+INSERT INTO Enquiry (enquirynumber, fname, lname, coursecode, plotno, street, city, phone, enquirydate, enquirystatus)
+VALUES
+  (1, 'John', 'Doe', 10, 'A-1', 'Street 1', 'City 1', '1234567890', '2023-01-01', 'Pending'),
+  (2, 'Jane', 'Smith', 20, 'B-2', 'Street 2', 'City 2', '9876543210', '2023-02-01', 'Follow-up'),
+  (3, 'Michael', 'Johnson', 30, 'C-3', 'Street 3', 'City 3', '5678901234', '2023-03-01', 'Converted'),
+  (4, 'Emily', 'Davis', 10, 'D-4', 'Street 4', 'City 4', '4321098765', '2023-04-01', 'Pending'),
+  (5, 'David', 'Wilson', 20, 'E-5', 'Street 5', 'City 5', '7890123456', '2023-05-01', 'Follow-up');
+
+-- Create the Enrollment table
+CREATE TABLE Enrollment (
+  rollno INT PRIMARY KEY,
+  enquirynumber INT,
+  batchcode INT,
+  enrollmentdate DATE,
+  FOREIGN KEY (enquirynumber) REFERENCES Enquiry(enquirynumber),
+  FOREIGN KEY (batchcode) REFERENCES Batch(batchcode)
+);
+
+-- Insert records into the Enrollment table
+INSERT INTO Enrollment (rollno, enquirynumber, batchcode, enrollmentdate)
+VALUES
+  (1, 1, 1, '2023-01-15'),
+  (2, 2, 2, '2023-02-15'),
+  (3, 3, 3, '2023-03-15'),
+  (4, 4, 4, '2023-04-15'),
+  (5, 5, 5, '2023-05-15');
+
+SELECT *
+FROM Batch
+WHERE coursecode = 10;
+
+SELECT batchcode
+FROM Batch
+WHERE expectedincome > netincome + 2000;
+
+SELECT c.coursename, b.startingdate
+FROM Course c
+JOIN Batch b ON c.coursecode = b.coursecode;
+
+SELECT coursename
+FROM Course
+WHERE coursecode IN (
+  SELECT coursecode
+  FROM Batch
+  WHERE coursefees > 50000
+);
+
+SELECT b.*
+FROM Batch b
+JOIN Course c ON b.coursecode = c.coursecode
+WHERE c.coursename = 'Course 1';
+
+SELECT COUNT(*) AS num_persons
+FROM Enquiry
+WHERE fname LIKE 'S%';
+
+DELETE FROM Enquiry
+WHERE coursecode IN (
+  SELECT coursecode
+  FROM Course
+  WHERE coursename = 'Course 2'
+);
+
+-- Delete rows from the Enrollment table
+DELETE FROM Enrollment
+WHERE enquirynumber IN (
+  SELECT enquirynumber
+  FROM Enquiry
+  WHERE coursecode IN (
+    SELECT coursecode
+    FROM Course
+    WHERE coursename = 'Course 2'
+  )
+);
+
+-- Delete rows from the Enquiry table
+DELETE FROM Enquiry
+WHERE coursecode IN (
+  SELECT coursecode
+  FROM Course
+  WHERE coursename = 'Course 2'
+);

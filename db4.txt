@@ -1,0 +1,59 @@
+-- [4]Consider the following Relations. It defines Library Database Schema 
+	BOOK (Book_ISBN [PK], Title[Not Null], Publisher_ Name, Price[Check Price>0], 
+	Date_Of_Publication(Default SYSDATE), Book_Copy) 
+	BOOK_AUTHORS (Book_ISBN ,Author_Name [PK],Author_City[Default 
+	“Pune‟], Phone[UNIQUE]) 
+	Design and Develop SQL DML statements for above database using MySQL 
+	1. Create tables for above database with all constraints and Insert at least 	five records in each table. 
+	2. Add field Author_email to BOOK_AUTHORS table. 
+	3.Create a view on Book table as “DBMS BOOKS” by selecting all books titled 	DBMS. 
+	4.Drop the view “DBMS BOOKS” just created
+
+
+-- Create the BOOK table
+CREATE TABLE BOOK (
+  Book_ISBN INT PRIMARY KEY,
+  Title VARCHAR(255) NOT NULL,
+  Publisher_Name VARCHAR(255),
+  Price DECIMAL(8, 2) CHECK (Price > 0),
+  Date_Of_Publication DATE DEFAULT CURRENT_DATE(),
+  Book_Copy INT
+);
+
+-- Create the BOOK_AUTHORS table
+CREATE TABLE BOOK_AUTHORS (
+  Book_ISBN INT,
+  Author_Name VARCHAR(255),
+  Author_City VARCHAR(255) DEFAULT 'Pune',
+  Phone VARCHAR(20) UNIQUE,
+  PRIMARY KEY (Book_ISBN, Author_Name),
+  FOREIGN KEY (Book_ISBN) REFERENCES BOOK(Book_ISBN)
+);
+
+-- Insert records into the BOOK table
+INSERT INTO BOOK (Book_ISBN, Title, Publisher_Name, Price, Book_Copy)
+VALUES
+  (1, 'Book 1', 'Publisher A', 9.99, 10),
+  (2, 'Book 2', 'Publisher B', 19.99, 5),
+  (3, 'Book 3', 'Publisher A', 14.99, 7),
+  (4, 'Book 4', 'Publisher C', 24.99, 3),
+  (5, 'Book 5', 'Publisher B', 12.99, 12);
+
+-- Insert records into the BOOK_AUTHORS table
+INSERT INTO BOOK_AUTHORS (Book_ISBN, Author_Name, Author_City, Phone)
+VALUES
+  (1, 'Author 1', 'Pune', '123-456-7890'),
+  (1, 'Author 2', 'Pune', '234-567-8901'),
+  (2, 'Author 3', 'Pune', '345-678-9012'),
+  (2, 'Author 4', 'Pune', '456-789-0123'),
+  (3, 'Author 5', 'Pune', '567-890-1234');
+
+ALTER TABLE BOOK_AUTHORS
+ADD COLUMN Author_email VARCHAR(255);
+
+CREATE VIEW `DBMS BOOKS` AS
+SELECT *
+FROM BOOK
+WHERE Title = 'DBMS';
+
+DROP VIEW IF EXISTS `DBMS BOOKS`;
