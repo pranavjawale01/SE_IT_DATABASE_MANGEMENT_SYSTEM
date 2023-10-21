@@ -1,5 +1,5 @@
 # SE_IT_DATABASE_MANGEMENT_SYSTEM
-DBMS Statement & Queries
+DBMS Statement & Queries SPPU 2019
 
 [1] Design and develop below database and execute following SQL DML statements using 
 MySQL .
