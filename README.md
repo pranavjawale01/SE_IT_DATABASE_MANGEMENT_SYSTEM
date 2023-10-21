@@ -17,7 +17,6 @@ with a budget < $50,000.
 all works on records.
 
 
-
 [2] Design and develop below database and execute following SQL DML statements using 
 MySQL .
 emp (eno, ename, bdate, title, salary, dno) 
